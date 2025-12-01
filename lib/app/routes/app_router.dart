@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../views/home_view.dart';
-import '../views/scanned_products_view.dart';
+import 'package:posmart/app/widgets/payment_page_view.dart';
+import '../views/pos_terminal_view.dart';
+import '../views/cart_items_view.dart';
+import '../widgets/checkout_page_view.dart';
 
-class AppRoutes {
-  static const String home = '/';
-  static const String scannedProducts = '/scanned-products';
-}
 
-final GoRouter router = GoRouter(
+final GoRouter  router = GoRouter(
   routes: [
-    GoRoute(
-      path: AppRoutes.home,
-      builder: (context, state) => const HomeView(),
-    ),
-    GoRoute(
-      path: AppRoutes.scannedProducts,
-      builder: (context, state) => const ScannedProductsView(),
-    ),
+    GoRoute(path: '/', builder: (ctx, state) => const PosTerminalPage()),
+
+    GoRoute(path: '/checkout', builder: (ctx, state) {
+      final extra = state.extra;
+      return CheckoutPage(cartItems: extra as List<Map<String, dynamic>>? ?? []);
+    }),
   ],
 );

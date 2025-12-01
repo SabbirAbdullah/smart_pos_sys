@@ -1,13 +1,15 @@
 import '../models/product_model.dart';
 
+
 class ProductRepository {
-  // Simulate fetching product by QR code
-  Product getProductByCode(String code) {
+// This simulates a local/product DB lookup by QR/sku
+  Product getProductBySku(String sku) {
+// In real app you'd fetch from DB or API. Keep default values similar to your controller.
     return Product(
-      id: code,
-      name: "Product $code",
-      price: 10 + code.hashCode % 100,
-      imageUrl: "assets/box.png", // random image
+      sku: sku,
+      name: 'Product $sku',
+      price: 300,
+      imageUrl: 'assets/box.png',
     );
   }
 }

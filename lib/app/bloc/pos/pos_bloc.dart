@@ -1,45 +1,77 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../repositories/product_repository.dart';
 import 'pos_event.dart';
 import 'pos_state.dart';
-import '../../models/product_model.dart';
 
 class POSBloc extends Bloc<POSEvent, POSState> {
-  POSBloc() : super(const POSState()) {
-    on<AddProduct>((event, emit) {
-      final updated = List<Product>.from(state.products);
-      int index = updated.indexWhere((p) => p.id == event.product.id);
-      if (index >= 0) {
-        updated[index] = updated[index].copyWith(
-            quantity: updated[index].quantity + 1);
-      } else {
-        updated.add(event.product);
-      }
-      emit(POSState(products: updated));
-    });
+  final ProductRepository repository = ProductRepository();
 
-    on<IncrementQuantity>((event, emit) {
-      final updated = state.products.map((p) {
-        if (p.id == event.productId) return p.copyWith(quantity: p.quantity + 1);
-        return p;
-      }).toList();
-      emit(POSState(products: updated));
-    });
+  POSBloc() : super(POSState.initial()) {
+    on<LoadInitialData>(_onLoad);
+    on<ToggleCartVisibility>(_onToggleCart);
+    on<UpdateSearchText>(_onUpdateSearch);
+    on<UpdateCategory>(_onUpdateCategory);
+    on<AddOrIncrementProduct>(_onAddOrIncrement);
+    on<RemoveProductEvent>(_onRemoveProduct);
+    on<ChangeQuantityEvent>(_onChangeQuantity);
+    on<ApplyDiscountEvent>(_onApplyDiscount);
+  }
 
-    on<DecrementQuantity>((event, emit) {
-      final updated = state.products.map((p) {
-        if (p.id == event.productId && p.quantity > 1) {
-          return p.copyWith(quantity: p.quantity - 1);
-        }
-        return p;
-      }).toList();
-      emit(POSState(products: updated));
-    });
+  void _onLoad(LoadInitialData event, Emitter<POSState> emit) {
+    emit(state.copyWith(productPrices: {}));
+  }
 
-    on<DeleteProduct>((event, emit) {
-      final updated =
-      state.products.where((p) => p.id != event.productId).toList();
-      emit(POSState(products: updated));
-    });
+  void _onToggleCart(ToggleCartVisibility event, Emitter<POSState> emit) {
+    emit(state.copyWith(isCartVisible: !state.isCartVisible));
+  }
+
+  void _onUpdateSearch(UpdateSearchText event, Emitter<POSState> emit) {
+    emit(state.copyWith(searchText: event.text));
+  }
+
+  void _onUpdateCategory(UpdateCategory event, Emitter<POSState> emit) {
+    emit(state.copyWith(selectedCategory: event.category));
+  }
+
+  void _onAddOrIncrement(AddOrIncrementProduct event, Emitter<POSState> emit) {
+    final sku = event.sku;
+    final newScanned = Map<String, int>.from(state.scannedProducts);
+
+    // safe repo lookup
+    final product = repository.getProductBySku(sku);
+    if (product == null) {
+      // Unknown sku — ignore or handle in UI via listener
+      return;
+    }
+
+    if (newScanned.containsKey(sku)) {
+      newScanned[sku] = newScanned[sku]! + 1;
+      emit(state.copyWith(scannedProducts: newScanned));
+      return;
+    }
+
+    // new SKU add
+    newScanned[sku] = 1;
+    final newPrices = Map<String, int>.from(state.productPrices);
+    newPrices[sku] = product.price;
+    emit(state.copyWith(scannedProducts: newScanned, productPrices: newPrices));
+  }
+
+  void _onRemoveProduct(RemoveProductEvent event, Emitter<POSState> emit) {
+    final newScanned = Map<String, int>.from(state.scannedProducts);
+    newScanned.remove(event.sku);
+    emit(state.copyWith(scannedProducts: newScanned));
+  }
+
+  void _onChangeQuantity(ChangeQuantityEvent event, Emitter<POSState> emit) {
+    final newScanned = Map<String, int>.from(state.scannedProducts);
+    if (!newScanned.containsKey(event.sku)) return;
+    final newQty = (newScanned[event.sku]! + event.change).clamp(1, 1000);
+    newScanned[event.sku] = newQty;
+    emit(state.copyWith(scannedProducts: newScanned));
+  }
+
+  void _onApplyDiscount(ApplyDiscountEvent event, Emitter<POSState> emit) {
+    emit(state.copyWith(isPercentage: event.isPercentage, discountValue: event.value));
   }
 }
-

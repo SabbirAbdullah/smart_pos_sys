@@ -1,25 +1,14 @@
 class Product {
-  final String id;
+  final String sku; // use qrCode as sku
   final String name;
-  final double price;
+  final int price; // using int BDT like original
   final String imageUrl;
-  int quantity;
+
 
   Product({
-    required this.id,
+    required this.sku,
     required this.name,
     required this.price,
-    this.imageUrl = '',
-    this.quantity = 1,
+    required this.imageUrl,
   });
-
-  Product copyWith({int? quantity}) {
-    return Product(
-      id: id,
-      name: name,
-      price: price,
-      imageUrl: imageUrl,
-      quantity: quantity ?? this.quantity,
-    );
-  }
 }

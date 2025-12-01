@@ -3,61 +3,34 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/pos/pos_bloc.dart';
 import '../bloc/pos/pos_event.dart';
 
-import '../models/product_model.dart';
+import '../core/constants.dart';
 
-class ProductCard extends StatelessWidget {
-  final Product product;
-  const ProductCard({super.key, required this.product});
+
+class ProductGridItem extends StatelessWidget {
+  final Map item;
+  final VoidCallback onTap;
+  const ProductGridItem({super.key, required this.item, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final POSBloc posBloc = context.read<POSBloc>();
-
-    return Dismissible(
-      key: Key(product.id),
-      direction: DismissDirection.endToStart,
-      onDismissed: (_) {
-        posBloc.add(DeleteProduct(product.id));
-      },
-      background: Container(
-        color: Colors.red,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: const Icon(Icons.delete, color: Colors.white),
-      ),
-      child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 6),
-        child: ListTile(
-          leading: Image.network(
-            product.imageUrl,
-            width: 50,
-            height: 50,
-            fit: BoxFit.cover,
-          ),
-          title: Text(product.name),
-          subtitle: Text("\$${product.price.toStringAsFixed(2)}"),
-          trailing: SizedBox(
-            width: 120,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.remove_circle_outline),
-                  onPressed: () {
-                    posBloc.add(DecrementQuantity(product.id));
-                  },
-                ),
-                Text("${product.quantity}", style: const TextStyle(fontSize: 16)),
-                IconButton(
-                  icon: const Icon(Icons.add_circle_outline),
-                  onPressed: () {
-                    posBloc.add(IncrementQuantity(product.id));
-                  },
-                ),
-              ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            height: 80,
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.borderColor),
+              borderRadius: BorderRadius.circular(10),
             ),
+            child: Image.asset(item['imageUrl'] as String, fit: BoxFit.contain),
           ),
-        ),
+          const SizedBox(height: 6),
+          Text(item['name'] as String, maxLines: 2, overflow: TextOverflow.ellipsis),
+          Text("${item['price']} BDT", style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 6),
+          ElevatedButton(onPressed: onTap,style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(AppColors.appBarColor)), child: const Text('Add',style: TextStyle(color: Colors.white),)),
+        ],
       ),
     );
   }
