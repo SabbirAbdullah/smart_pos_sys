@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:posmart/app/presentation/pos/widgets/payment_page_view.dart';
 
-import 'package:flutter/material.dart';
-import 'package:posmart/app/core/constants.dart';
-import 'package:posmart/app/widgets/payment_page_view.dart';
+
 
 class CheckoutPage extends StatelessWidget {
   final List<Map<String, dynamic>> cartItems;

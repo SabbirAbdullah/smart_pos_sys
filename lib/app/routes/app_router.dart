@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:posmart/app/widgets/payment_page_view.dart';
-import '../views/pos_terminal_view.dart';
-import '../views/cart_items_view.dart';
-import '../widgets/checkout_page_view.dart';
+
+import '../presentation/pos/views/pos_terminal_view.dart';
+import '../presentation/pos/widgets/checkout_page_view.dart';
+
 
 
 final GoRouter  router = GoRouter(

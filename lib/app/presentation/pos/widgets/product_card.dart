@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/pos/pos_bloc.dart';
-import '../bloc/pos/pos_event.dart';
 
-import '../core/constants.dart';
+import '../../../core/constants.dart';
+
 
 
 class ProductGridItem extends StatelessWidget {

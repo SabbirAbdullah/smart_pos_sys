@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:posmart/app/views/cart_items_view.dart';
-import '../bloc/pos/pos_bloc.dart';
-import '../bloc/pos/pos_event.dart';
-import '../bloc/pos/pos_state.dart';
-import '../core/constants.dart';
-import '../core/utilis.dart';
-import '../repositories/product_repository.dart';
+
+import '../../../bloc/pos/pos_bloc.dart';
+import '../../../bloc/pos/pos_event.dart';
+import '../../../bloc/pos/pos_state.dart';
+
+import '../../../core/constants.dart';
+import '../../../core/utilis.dart';
 import '../widgets/product_card.dart';
 import '../widgets/checkout_page_view.dart';
 
@@ -16,6 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../widgets/total_summary_card.dart';
+import 'cart_items_view.dart';
 
 class PosTerminalPage extends StatelessWidget {
   const PosTerminalPage({super.key});
